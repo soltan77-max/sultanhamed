@@ -5,21 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بطاقة QR — مركز صحي الخالدية</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;padding:20px 14px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-.toolbar{width:100%;max-width:680px;background:#fff;border-radius:14px;border:1px solid #d1fae5;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.tb-label{font-size:12px;color:#374151;white-space:nowrap;font-weight:500}
-.tb-input{flex:1;min-width:200px;padding:7px 11px;border:1px solid #d1fae5;border-radius:8px;font-size:12px;font-family:inherit;outline:none;direction:ltr;text-align:left;color:#1A1A2E;background:#f8fafb}
-.tb-input:focus{border-color:#0F6E56}
-.btn-g{padding:8px 16px;background:#0F6E56;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
-.btn-p{padding:8px 16px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
 .card{width:100%;max-width:680px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(15,110,86,.10)}
 .card-top{background:#0F6E56;padding:20px 26px 16px}
 .ct-row{display:flex;align-items:center;gap:13px;margin-bottom:12px}
 .ct-logo{width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.25)}
-.ct-logo svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ct-logo svg.icon{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ct-text h1{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
 .ct-text p{font-size:11px;color:rgba(255,255,255,.72);margin-top:2px}
 .ct-badge{margin-right:auto;font-size:10px;background:rgba(255,255,255,.15);color:#fff;padding:3px 11px;border-radius:12px;border:1px solid rgba(255,255,255,.3);white-space:nowrap}
@@ -28,14 +21,14 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
 .card-body{padding:22px 26px}
 .main-row{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:flex-start;margin-bottom:20px}
 .qr-col{display:flex;flex-direction:column;align-items:center;gap:8px}
-.qr-wrap{padding:10px;background:#fff;border:2px solid #E1F5EE;border-radius:14px;line-height:0;min-width:220px;min-height:220px;display:flex;align-items:center;justify-content:center}
-.qr-wrap canvas{display:block!important;border-radius:8px}
+.qr-wrap{padding:10px;background:#fff;border:2px solid #E1F5EE;border-radius:14px;line-height:0}
+.qr-wrap svg{display:block;border-radius:8px;width:200px;height:200px}
 .qr-hint{font-size:10px;color:#64748B;text-align:center;line-height:1.6}
 .qr-hint strong{color:#0F6E56;display:block;font-size:11px}
 .svc-title{font-size:17px;font-weight:700;color:#1A1A2E;margin-bottom:4px}
 .svc-sub{font-size:12px;color:#64748B;line-height:1.65;margin-bottom:13px}
 .tribe-strip{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 13px;margin-bottom:13px;display:flex;align-items:flex-start;gap:9px}
-.tribe-strip svg{width:16px;height:16px;stroke:#534AB7;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:1px}
+.tribe-icon{width:16px;height:16px;stroke:#534AB7;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:1px}
 .tribe-txt{font-size:11px;color:#3C3489;line-height:1.6}
 .tribe-txt strong{color:#26215C}
 .steps{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
@@ -47,8 +40,8 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
 .tag{font-size:10px;padding:3px 8px;border-radius:7px;display:flex;align-items:center;gap:4px}
 .tag-g{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
 .tag-p{background:#F5F3FF;border:1px solid #DDD6FE;color:#4C1D95}
-.tdg{width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0}
-.tdp{width:5px;height:5px;border-radius:50%;background:#8B5CF6;flex-shrink:0}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dg{background:#22c55e}.dp{background:#8B5CF6}
 .divider{border:none;border-top:1.5px dashed #e2e8f0;margin-bottom:16px}
 .foot{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}
 .fn{font-size:14px;font-weight:700;color:#0F6E56;margin-bottom:3px}
@@ -61,10 +54,8 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
 .card-band{background:#0F6E56;padding:9px 26px;display:flex;align-items:center;justify-content:space-between}
 .cb1{font-size:10.5px;color:rgba(255,255,255,.82)}
 .cb2{font-size:12px;font-weight:600;color:#5DCAA5;direction:ltr}
-.err{background:#fff3f3;border:1px solid #fca5a5;border-radius:8px;padding:8px 12px;font-size:11px;color:#b91c1c;margin-top:8px;display:none}
 @media print{
   body{background:#fff;padding:0;display:block}
-  .toolbar{display:none!important}
   .card{border-radius:0;box-shadow:none;max-width:100%}
   .card-top,.card-band,.tribe-strip,.snum,.tag-g,.tag-p{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{margin:0;size:A4 portrait}
@@ -72,18 +63,10 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
 </style>
 </head>
 <body>
-
-<div class="toolbar">
-  <span class="tb-label">رابط المنصة:</span>
-  <input class="tb-input" id="urlInput" value="https://soltan77-max.github.io/sultanhamed/" placeholder="https://...">
-  <button class="btn-g" onclick="buildQR()">تحديث QR</button>
-  <button class="btn-p" onclick="window.print()">🖨️ طباعة</button>
-</div>
-
 <div class="card">
   <div class="card-top">
     <div class="ct-row">
-      <div class="ct-logo"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="ct-logo"><svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
       <div class="ct-text"><h1>مركز صحي الخالدية</h1><p>التجمع الصحي الأول · الرياض</p></div>
       <div class="ct-badge">خدمة إلكترونية</div>
     </div>
@@ -92,21 +75,19 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
       <span>وزارة الصحة · المملكة العربية السعودية · الرقم الوطني الموحد: 937</span>
     </div>
   </div>
-
   <div class="card-body">
     <div class="main-row">
       <div class="qr-col">
         <div class="qr-wrap">
-          <canvas id="qrCanvas"></canvas>
+          <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 39 39" shape-rendering="crispEdges"><path fill="#FFFFFF" d="M0 0h39v39H0z"/><path stroke="#0F6E56" d="M1 1.5h7m3 0h1m2 0h1m1 0h1m2 0h3m1 0h2m2 0h1m3 0h7M1 2.5h1m5 0h1m1 0h1m5 0h1m4 0h2m2 0h1m4 0h1m1 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m2 0h8m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m6 0h1m4 0h3m2 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h2m1 0h4m3 0h4m3 0h2m1 0h1m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m1 0h1m1 0h4m1 0h2m4 0h3m2 0h1m1 0h1m1 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M13 8.5h2m1 0h2m1 0h2m1 0h2m1 0h1m1 0h3M3 9.5h1m2 0h5m5 0h6m1 0h1m1 0h1m3 0h2m1 0h5M2 10.5h2m1 0h1m5 0h1m1 0h6m4 0h2m1 0h1m1 0h2m1 0h2m1 0h2m1 0h1M1 11.5h2m1 0h1m2 0h1m2 0h1m1 0h2m5 0h5m4 0h1m1 0h3m1 0h2m1 0h1M3 12.5h2m4 0h1m4 0h1m8 0h2m2 0h1m1 0h1m2 0h3m1 0h2M1 13.5h1m1 0h1m3 0h1m1 0h2m2 0h1m1 0h1m2 0h1m1 0h1m1 0h3m4 0h1m1 0h1m5 0h1M1 14.5h3m2 0h1m1 0h1m3 0h1m1 0h1m2 0h2m1 0h3m1 0h1m2 0h6m2 0h3M1 15.5h1m2 0h2m1 0h1m6 0h1m2 0h2m2 0h1m1 0h2m1 0h4m1 0h5m1 0h1M1 16.5h3m1 0h2m2 0h2m1 0h3m1 0h1m2 0h2m2 0h3m1 0h5m1 0h2M2 17.5h3m1 0h2m2 0h3m2 0h1m5 0h3m1 0h1m3 0h3M1 18.5h2m2 0h1m2 0h10m1 0h2m3 0h1m1 0h6m2 0h1m2 0h1M1 19.5h2m4 0h2m3 0h10m1 0h1m4 0h1m2 0h2m1 0h2m1 0h1M3 20.5h2m1 0h1m1 0h1m1 0h1m1 0h1m5 0h2m2 0h3m2 0h1m1 0h2m1 0h3m1 0h2M3 21.5h2m2 0h2m3 0h5m1 0h1m5 0h1m2 0h1m1 0h1m1 0h1m2 0h1m1 0h1M1 22.5h2m1 0h3m2 0h1m1 0h2m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m4 0h1m2 0h2m2 0h1m1 0h1M1 23.5h1m1 0h3m1 0h2m2 0h1m1 0h1m1 0h3m3 0h1m2 0h1m1 0h1m1 0h3m1 0h2m1 0h1m1 0h1M1 24.5h2m1 0h2m4 0h2m1 0h4m1 0h1m2 0h1m3 0h1m2 0h1m3 0h1m1 0h1m1 0h1M2 25.5h1m3 0h3m3 0h1m4 0h2m4 0h3m1 0h1m1 0h1m1 0h2m4 0h1M2 26.5h3m3 0h1m4 0h2m1 0h1m2 0h2m4 0h1m2 0h2m1 0h2m1 0h1m2 0h1M1 27.5h3m1 0h3m1 0h1m2 0h2m3 0h1m3 0h2m2 0h1m1 0h2m1 0h2m1 0h3m1 0h1M5 28.5h1m3 0h1m1 0h2m4 0h3m2 0h1m1 0h2m1 0h1m2 0h2m2 0h1m2 0h1M1 29.5h4m1 0h4m3 0h1m2 0h1m1 0h1m2 0h3m4 0h7M9 30.5h1m1 0h3m4 0h1m1 0h2m1 0h4m2 0h1m3 0h2m2 0h1M1 31.5h7m1 0h2m2 0h1m1 0h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h3m1 0h1M1 32.5h1m5 0h1m1 0h3m4 0h6m1 0h2m4 0h1m3 0h2m1 0h2M1 33.5h1m1 0h3m1 0h1m3 0h3m1 0h1m1 0h3m2 0h1m1 0h2m1 0h7M1 34.5h1m1 0h3m1 0h1m2 0h6m5 0h1m1 0h1m2 0h1m2 0h1m3 0h1m3 0h1M1 35.5h1m1 0h3m1 0h1m1 0h1m1 0h1m6 0h1m3 0h3m3 0h2m3 0h1m1 0h3M1 36.5h1m5 0h1m3 0h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h2m1 0h1m1 0h2m3 0h1M1 37.5h7m3 0h3m5 0h2m1 0h1m5 0h2m3 0h2m2 0h1"/></svg>
         </div>
-        <div class="err" id="qrErr">تعذّر إنشاء QR — تحقق من الرابط</div>
         <div class="qr-hint"><strong>صوّر بكاميرا جوالك</strong>iOS · Android · بدون تطبيق</div>
       </div>
       <div>
         <div class="svc-title">منصة الأسئلة الشائعة الذكية</div>
         <div class="svc-sub">تحقق من أهلية علاجك · احجز موعدك<br>استفسر عن خدماتك — في ثوانٍ بدون انتظار</div>
         <div class="tribe-strip">
-          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <svg class="tribe-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           <div class="tribe-txt">يشمل التحقق من <strong>أهلية العلاج القبلية</strong> لجميع القبائل المسجلة في التجمع الأول</div>
         </div>
         <div class="steps">
@@ -115,11 +96,11 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
           <div class="step"><div class="snum">٣</div><div class="stxt">احصل على بيانات أهليتك <strong>فوراً</strong></div></div>
         </div>
         <div class="tags">
-          <span class="tag tag-p"><span class="tdp"></span>أهلية العلاج القبلية</span>
-          <span class="tag tag-g"><span class="tdg"></span>حجز المواعيد</span>
-          <span class="tag tag-g"><span class="tdg"></span>التحاليل</span>
-          <span class="tag tag-g"><span class="tdg"></span>التطعيمات</span>
-          <span class="tag tag-g"><span class="tdg"></span>الأدوية المزمنة</span>
+          <span class="tag tag-p"><span class="dot dp"></span>أهلية العلاج القبلية</span>
+          <span class="tag tag-g"><span class="dot dg"></span>حجز المواعيد</span>
+          <span class="tag tag-g"><span class="dot dg"></span>التحاليل</span>
+          <span class="tag tag-g"><span class="dot dg"></span>التطعيمات</span>
+          <span class="tag tag-g"><span class="dot dg"></span>الأدوية المزمنة</span>
         </div>
       </div>
     </div>
@@ -135,7 +116,7 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
       </div>
       <div class="fr">
         <div class="fh"><strong>أوقات العمل:</strong><br>الأحد – الخميس<br>٨:٠٠ ص — ٤:٠٠ م</div>
-        <div class="fu" id="urlShow">soltan77-max.github.io/sultanhamed/</div>
+        <div class="fu">soltan77-max.github.io/sultanhamed/</div>
       </div>
     </div>
   </div>
@@ -144,53 +125,5 @@ body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;
     <span class="cb2">937</span>
   </div>
 </div>
-
-<script>
-function buildQR() {
-  var url = document.getElementById('urlInput').value.trim();
-  if (!url) url = 'https://soltan77-max.github.io/sultanhamed/';
-  document.getElementById('urlShow').textContent = url.replace(/^https?:\/\//, '');
-  document.getElementById('qrErr').style.display = 'none';
-
-  var canvas = document.getElementById('qrCanvas');
-
-  // Use QRCode library (loaded from CDN)
-  if (typeof QRCode === 'undefined') {
-    document.getElementById('qrErr').style.display = 'block';
-    document.getElementById('qrErr').textContent = 'مكتبة QR لم تُحمَّل — تحقق من الاتصال بالإنترنت';
-    return;
-  }
-
-  try {
-    QRCode.toCanvas(canvas, url, {
-      width: 200,
-      margin: 1,
-      color: {
-        dark: '#0F6E56',
-        light: '#FFFFFF'
-      },
-      errorCorrectionLevel: 'H'
-    }, function(err) {
-      if (err) {
-        document.getElementById('qrErr').style.display = 'block';
-        document.getElementById('qrErr').textContent = 'خطأ: ' + err.message;
-      }
-    });
-  } catch(e) {
-    document.getElementById('qrErr').style.display = 'block';
-    document.getElementById('qrErr').textContent = 'خطأ غير متوقع: ' + e.message;
-  }
-}
-
-document.getElementById('urlInput').addEventListener('input', function() {
-  clearTimeout(window._qrTimer);
-  window._qrTimer = setTimeout(buildQR, 400);
-});
-
-// Wait for QRCode library to load
-window.addEventListener('load', function() {
-  setTimeout(buildQR, 100);
-});
-</script>
 </body>
 </html>
