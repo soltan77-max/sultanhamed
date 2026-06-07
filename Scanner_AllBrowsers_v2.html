@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ماسح الهوية — مركز صحي الخالدية</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pr:#0F6E56;--prd:#085041;--prl:#E1F5EE;--prm:#5DCAA5;--pu:#534AB7;--pul:#EEEDFE;--pum:#AFA9EC;--bg:#0D1117;--c1:#161B22;--c2:#1C2128;--bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.15);--tx:#E6EDF3;--mu:#8B949E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--tx);direction:rtl;min-height:100vh}
+/* ── header ── */
+.hdr{display:flex;align-items:center;gap:11px;padding:13px 18px;background:var(--c1);border-bottom:1px solid var(--bd)}
+.hico{width:36px;height:36px;background:var(--pr);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.hico svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.htx h1{font-size:13.5px;font-weight:600}
+.htx p{font-size:10px;color:var(--mu);margin-top:1px}
+.hlive{margin-right:auto;font-size:10px;background:rgba(15,110,86,.18);color:var(--prm);padding:3px 10px;border-radius:12px;border:1px solid rgba(93,202,165,.3)}
+/* ── main ── */
+.wrap{max-width:500px;margin:0 auto;padding:18px 14px}
+/* ── notice ── */
+.notice{background:rgba(133,79,11,.15);border:1px solid rgba(239,159,39,.3);border-radius:10px;padding:11px 13px;margin-bottom:16px;font-size:12px;color:#EF9F27;line-height:1.65;display:none}
+.notice.show{display:block}
+/* ── tabs ── */
+.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:16px}
+.tb{padding:9px 5px;border-radius:9px;border:1px solid var(--bd2);background:var(--c1);color:var(--mu);font-size:11px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .18s}
+.tb svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb.on{background:rgba(15,110,86,.15);border-color:var(--prm);color:var(--prm)}
+/* ── box ── */
+.box{background:var(--c1);border:1px solid var(--bd);border-radius:13px;overflow:hidden;margin-bottom:14px;display:none}
+.box.show{display:block}
+.boxhdr{padding:11px 15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.boxtitle{font-size:12.5px;font-weight:500}
+.st{font-size:10px;padding:2px 9px;border-radius:7px}
+.st-idle{background:rgba(107,114,128,.2);color:#9CA3AF}
+.st-on{background:rgba(15,110,86,.18);color:var(--prm)}
+.st-done{background:rgba(83,74,183,.2);color:#AFA9EC}
+.st-err{background:rgba(163,45,45,.2);color:#FCA5A5}
+/* ── viewport ── */
+.vp{position:relative;background:#000;aspect-ratio:4/3;overflow:hidden}
+video{width:100%;height:100%;object-fit:cover;display:none}
+.ph{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:4/3;gap:10px;background:var(--c2)}
+.ph svg{width:48px;height:48px;stroke:var(--mu);fill:none;stroke-width:1;opacity:.35}
+.ph p{font-size:11.5px;color:var(--mu);text-align:center;line-height:1.6;max-width:210px}
+.overlay{position:absolute;inset:0;pointer-events:none;display:none}
+.frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:62%;aspect-ratio:1.6}
+.c{position:absolute;width:20px;height:20px}
+.tl{top:0;right:0;border-top:2.5px solid var(--prm);border-right:2.5px solid var(--prm);border-radius:0 4px 0 0}
+.tr{top:0;left:0;border-top:2.5px solid var(--prm);border-left:2.5px solid var(--prm);border-radius:4px 0 0 0}
+.bl{bottom:0;right:0;border-bottom:2.5px solid var(--prm);border-right:2.5px solid var(--prm);border-radius:0 0 4px 0}
+.br{bottom:0;left:0;border-bottom:2.5px solid var(--prm);border-left:2.5px solid var(--prm);border-radius:0 0 0 4px}
+.laser{position:absolute;right:0;left:0;height:2px;background:linear-gradient(90deg,transparent,var(--prm),transparent);animation:sc 2s linear infinite}
+@keyframes sc{0%{top:10%}100%{top:88%}}
+/* ── controls ── */
+.ctrls{display:flex;gap:7px;padding:11px 13px;border-top:1px solid var(--bd)}
+.btn-go{flex:1;padding:10px;border:none;border-radius:8px;background:var(--pr);color:#fff;font-size:12.5px;cursor:pointer;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-go:hover{background:var(--prd)}
+.btn-go:disabled{background:#2D3748;color:var(--mu);cursor:not-allowed}
+.btn-sm{padding:10px 14px;border:1px solid var(--bd2);border-radius:8px;background:var(--c2);color:var(--mu);font-size:11.5px;cursor:pointer;font-family:inherit}
+.btn-sm:hover{background:rgba(163,45,45,.15);border-color:rgba(163,45,45,.4);color:#FCA5A5}
+/* ── upload ── */
+.drop{border:1.5px dashed var(--bd2);border-radius:11px;padding:26px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:11px}
+.drop:hover,.drop.drag{border-color:var(--prm);background:rgba(15,110,86,.06)}
+.drop svg{width:34px;height:34px;stroke:var(--mu);margin:0 auto 8px;display:block;fill:none;stroke-width:1.5}
+.drop p{font-size:11.5px;color:var(--mu);line-height:1.6}
+.drop span{color:var(--prm);font-weight:500}
+.prevbox{display:none;margin-bottom:10px}
+.prevbox img{width:100%;border-radius:8px;border:1px solid var(--bd2)}
+/* ── manual ── */
+.mbox{padding:14px 15px}
+.lbl{font-size:11px;color:var(--mu);display:block;margin-bottom:4px}
+.inp{width:100%;padding:9px 11px;border:1px solid var(--bd2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;background:var(--c2);color:var(--tx);margin-bottom:10px}
+.inp:focus{border-color:var(--prm)}
+.inp::placeholder{color:#4B5563}
+.sbtn{width:100%;padding:10px;border:none;border-radius:8px;background:var(--pr);color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500}
+.sbtn:hover{background:var(--prd)}
+/* ── result ── */
+.res{background:var(--c1);border:1px solid var(--bd);border-radius:13px;overflow:hidden;margin-bottom:14px;display:none}
+.res.show{display:block}
+.reshdr{padding:11px 15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px}
+.rico{width:27px;height:27px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rico-ok{background:rgba(15,110,86,.2)} .rico-er{background:rgba(163,45,45,.2)}
+.rtitle{font-size:12.5px;font-weight:500}
+.rbody{padding:13px 15px}
+.rf{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;background:var(--c2);border-radius:8px;margin-bottom:7px}
+.rfi{width:27px;height:27px;border-radius:7px;background:rgba(15,110,86,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rfi svg{width:13px;height:13px;stroke:var(--prm);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rfl{font-size:10px;color:var(--mu);margin-bottom:2px}
+.rfv{font-size:12.5px;font-weight:500;line-height:1.4}
+.eb{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:3px 10px;border-radius:16px;margin-top:5px}
+.ef{background:rgba(15,110,86,.18);color:var(--prm);border:1px solid rgba(93,202,165,.3)}
+.ec{background:rgba(133,79,11,.18);color:#EF9F27;border:1px solid rgba(239,159,39,.3)}
+.en{background:rgba(163,45,45,.18);color:#FCA5A5;border:1px solid rgba(252,165,165,.3)}
+.ract{display:flex;gap:7px;padding:0 15px 13px}
+.ra{flex:1;padding:8px;border-radius:8px;border:1px solid var(--bd2);background:var(--c2);color:var(--mu);font-size:11.5px;cursor:pointer;font-family:inherit;transition:all .15s}
+.ra:hover{background:rgba(15,110,86,.12);border-color:var(--prm);color:var(--prm)}
+.ra-pr{background:rgba(15,110,86,.15);border-color:var(--prm);color:var(--prm)}
+/* ── history ── */
+.hist{background:var(--c1);border:1px solid var(--bd);border-radius:13px;overflow:hidden}
+.histhdr{padding:11px 15px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.histhdr span{font-size:12.5px;font-weight:500}
+.histhdr button{font-size:11px;color:var(--mu);cursor:pointer;background:none;border:none;font-family:inherit}
+.histhdr button:hover{color:#FCA5A5}
+.hilist{padding:8px}
+.hi{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;cursor:pointer}
+.hi:hover{background:var(--c2)}
+.hid{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dok{background:var(--prm)}.dco{background:#EF9F27}.dno{background:#FCA5A5}
+.hin{flex:1;font-size:12px}
+.hit{font-size:10px;color:var(--mu)}
+.hemp{padding:18px;text-align:center;font-size:12px;color:var(--mu)}
+/* ── ring ── */
+.ring{width:17px;height:17px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* ── toast ── */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--c1);border:1px solid var(--bd2);border-radius:9px;padding:9px 16px;font-size:12px;transition:transform .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* ── https note ── */
+.https-note{background:rgba(83,74,183,.12);border:1px solid var(--pum);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:11.5px;color:#C4B5FD;line-height:1.7;display:none}
+.https-note.show{display:block}
+.https-note strong{color:#E9D5FF;display:block;margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hico"><svg viewBox="0 0 24 24"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6"/></svg></div>
+  <div class="htx"><h1>ماسح الهوية الصحية</h1><p>مركز صحي الخالدية · التجمع الأول</p></div>
+  <div class="hlive">مباشر</div>
+</div>
+
+<div class="wrap">
+
+  <!-- HTTPS notice -->
+  <div class="https-note" id="httpsNote">
+    <strong>⚠️ لتشغيل الكاميرا يلزم رفع الملف على خادم HTTPS</strong>
+    المتصفحات (Safari وChrome) تمنع الكاميرا على الملفات المحلية <code>file://</code> لأسباب أمنية.<br>
+    <strong>الحل:</strong> ارفع الملف على أي استضافة (مثل GitHub Pages أو الخادم الصحي) أو استخدم وضع <strong>رفع صورة</strong> أو <strong>إدخال يدوي</strong> — يعملان بدون إنترنت.
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tb on" id="tbCam" onclick="setTab('cam')">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      الكاميرا
+    </button>
+    <button class="tb" id="tbImg" onclick="setTab('img')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      رفع صورة
+    </button>
+    <button class="tb" id="tbMan" onclick="setTab('man')">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      يدوي
+    </button>
+  </div>
+
+  <!-- CAM BOX -->
+  <div class="box show" id="boxCam">
+    <div class="boxhdr"><span class="boxtitle">مسح بالكاميرا</span><span class="st st-idle" id="camSt">في الانتظار</span></div>
+    <div class="vp">
+      <div class="ph" id="camPh">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <p id="camPhTxt">اضغط <strong>بدء المسح</strong><br>يلزم HTTPS لتشغيل الكاميرا</p>
+      </div>
+      <video id="vid" autoplay playsinline muted></video>
+      <canvas id="snapC" style="display:none"></canvas>
+      <div class="overlay" id="ov">
+        <div class="frame">
+          <div class="c tl"></div><div class="c tr"></div>
+          <div class="c bl"></div><div class="c br"></div>
+          <div class="laser"></div>
+        </div>
+      </div>
+    </div>
+    <div class="ctrls">
+      <button class="btn-go" id="btnStart" onclick="startCam()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        بدء المسح
+      </button>
+      <button class="btn-sm" id="btnFlip" style="display:none" onclick="flipCam()" title="تبديل">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+      </button>
+      <button class="btn-sm" id="btnStop" style="display:none" onclick="stopCam()">إيقاف</button>
+    </div>
+  </div>
+
+  <!-- IMG BOX -->
+  <div class="box" id="boxImg">
+    <div class="boxhdr"><span class="boxtitle">رفع صورة الهوية</span></div>
+    <div style="padding:14px">
+      <div class="drop" id="dropZ" onclick="document.getElementById('fi').click()" ondragover="dov(event)" ondragleave="dol(event)" ondrop="dop(event)">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p>اسحب صورة الهوية هنا أو <span>اضغط للاختيار</span><br><small style="font-size:10px;opacity:.7">JPG · PNG · حتى ٥ ميجابايت</small></p>
+      </div>
+      <input type="file" id="fi" accept="image/*" style="display:none" onchange="onFile(event)">
+      <div class="prevbox" id="prev"><img id="prevImg" alt="معاينة"></div>
+      <button class="sbtn" id="btnAn" style="display:none" onclick="analyzeImg()">تحليل الصورة</button>
+    </div>
+  </div>
+
+  <!-- MANUAL BOX -->
+  <div class="box" id="boxMan">
+    <div class="mbox">
+      <label class="lbl">رقم الهوية الوطنية</label>
+      <input class="inp" type="text" id="idInp" placeholder="1023456789" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')doLookup()">
+      <label class="lbl">اسم المراجع (اختياري)</label>
+      <input class="inp" type="text" id="nmInp" placeholder="الاسم الكامل...">
+      <button class="sbtn" onclick="doLookup()">بحث عن الأهلية</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="res" id="resBox">
+    <div class="reshdr">
+      <div class="rico" id="rico"></div>
+      <span class="rtitle" id="rtitle">نتيجة البحث</span>
+      <button onclick="clearRes()" style="margin-right:auto;background:none;border:none;cursor:pointer;color:var(--mu);font-size:17px;padding:0 4px">×</button>
+    </div>
+    <div class="rbody" id="rbody"></div>
+    <div class="ract">
+      <button class="ra ra-pr" onclick="window.print()">طباعة</button>
+      <button class="ra" onclick="copyRes()">نسخ</button>
+      <button class="ra" onclick="clearRes()">مسح جديد</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="hist">
+    <div class="histhdr"><span>سجل اليوم</span><button onclick="clearHist()">مسح السجل</button></div>
+    <div id="hilist"><div class="hemp">لا توجد عمليات مسح بعد</div></div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ──────── DATA ──────── */
+var DB = {
+  "1023456789":{name:"محمد بن سعد العنزي",   tribe:"قبيلة عنزة",    elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+  "1034567890":{name:"فهد بن علي الدوسري",   tribe:"قبيلة الدواسر", elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+  "1045678901":{name:"سعد بن ناصر المطيري",  tribe:"قبيلة مطير",    elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+  "1056789012":{name:"خالد بن عبدالله الشمري",tribe:"قبيلة شمر",    elig:"cond", cov:"علاج مشروط",     docs:"هوية + تسجيل مسبق"},
+  "1067890123":{name:"عبدالله بن محمد القحطاني",tribe:"قبيلة قحطان",elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+  "1078901234":{name:"ناصر بن فهد العجمي",   tribe:"قبيلة العجمان", elig:"cond", cov:"علاج مشروط",     docs:"هوية + إثبات إقامة"},
+  "1089012345":{name:"سلطان بن راشد الحربي",  tribe:"قبيلة الحرب",   elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+  "1090123456":{name:"عمر بن خالد التميمي",   tribe:"قبيلة بني تميم",elig:"full", cov:"العلاج الشامل",  docs:"هوية + وثيقة انتماء"},
+};
+
+/* ──────── STATE ──────── */
+var stream=null, facing='environment', scanTimer=null, hist=[], activeTab='cam';
+
+/* ──────── TABS ──────── */
+function setTab(t){
+  activeTab=t;
+  ['cam','img','man'].forEach(function(x){
+    document.getElementById('tb'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('on',x===t);
+    document.getElementById('box'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('show',x===t);
+  });
+  if(t!=='cam' && stream) stopCam();
+  clearRes();
+}
+/* capitalise first char helper */
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+/* ──────── CAMERA ──────── */
+function startCam(){
+  // Check HTTPS / localhost
+  var loc = location.protocol;
+  var host = location.hostname;
+  var isSecure = loc==='https:' || host==='localhost' || host==='127.0.0.1' || host==='';
+  if(!isSecure){
+    document.getElementById('httpsNote').classList.add('show');
+    setSt('err','يلزم HTTPS');
+    toast('⚠️ الكاميرا تحتاج رفع الملف على خادم HTTPS');
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    setSt('err','الكاميرا غير مدعومة');
+    toast('متصفحك لا يدعم الكاميرا — استخدم Chrome أو Safari على HTTPS');
+    return;
+  }
+  var btn=document.getElementById('btnStart');
+  btn.disabled=true;
+  btn.innerHTML='<div class="ring"></div> جاري...';
+  var constraints={video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:720}}};
+  navigator.mediaDevices.getUserMedia(constraints).then(function(s){
+    stream=s;
+    var v=document.getElementById('vid');
+    v.srcObject=s;
+    v.style.display='block';
+    document.getElementById('camPh').style.display='none';
+    document.getElementById('ov').style.display='block';
+    document.getElementById('btnStart').style.display='none';
+    document.getElementById('btnFlip').style.display='';
+    document.getElementById('btnStop').style.display='';
+    setSt('on','المسح نشط');
+    btn.disabled=false;
+    btn.innerHTML='بدء المسح';
+    startScan();
+  }).catch(function(e){
+    btn.disabled=false;
+    btn.innerHTML='بدء المسح';
+    var msg='تعذّر الوصول للكاميرا';
+    if(e.name==='NotAllowedError') msg='رُفض الإذن — اسمح بالكاميرا في إعدادات المتصفح';
+    else if(e.name==='NotFoundError') msg='لا توجد كاميرا في هذا الجهاز';
+    else if(e.name==='NotReadableError') msg='الكاميرا مستخدمة من تطبيق آخر';
+    setSt('err',msg);
+    toast('⚠️ '+msg);
+  });
+}
+
+function stopCam(){
+  if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+  if(scanTimer){clearInterval(scanTimer);scanTimer=null;}
+  var v=document.getElementById('vid');
+  v.srcObject=null; v.style.display='none';
+  document.getElementById('camPh').style.display='flex';
+  document.getElementById('ov').style.display='none';
+  document.getElementById('btnStart').style.display='';
+  document.getElementById('btnFlip').style.display='none';
+  document.getElementById('btnStop').style.display='none';
+  setSt('idle','في الانتظار');
+}
+
+function flipCam(){
+  facing = facing==='environment'?'user':'environment';
+  stopCam(); startCam();
+}
+
+function setSt(type,txt){
+  var el=document.getElementById('camSt');
+  el.className='st st-'+type; el.textContent=txt;
+}
+
+function startScan(){
+  scanTimer=setInterval(function(){
+    if(!stream) return;
+    var v=document.getElementById('vid'), c=document.getElementById('snapC');
+    if(!v.videoWidth) return;
+    c.width=v.videoWidth; c.height=v.videoHeight;
+    c.getContext('2d').drawImage(v,0,0);
+    /* Real deployment: send c.toDataURL() to OCR API */
+    /* Demo simulation: random hit ~12% per frame */
+    if(Math.random()<0.12){
+      var ids=Object.keys(DB);
+      var id=ids[Math.floor(Math.random()*ids.length)];
+      stopCam(); setSt('done','تم الكشف');
+      showResult(id,true);
+    }
+  },2500);
+}
+
+/* ──────── UPLOAD ──────── */
+function dov(e){e.preventDefault();document.getElementById('dropZ').classList.add('drag');}
+function dol(e){document.getElementById('dropZ').classList.remove('drag');}
+function dop(e){
+  e.preventDefault(); document.getElementById('dropZ').classList.remove('drag');
+  var f=e.dataTransfer.files[0];
+  if(f){loadPreview(f);}
+}
+function onFile(e){var f=e.target.files[0]; if(f) loadPreview(f);}
+function loadPreview(f){
+  var r=new FileReader();
+  r.onload=function(ev){
+    document.getElementById('prevImg').src=ev.target.result;
+    document.getElementById('prev').style.display='';
+    document.getElementById('btnAn').style.display='';
+  };
+  r.readAsDataURL(f);
+}
+function analyzeImg(){
+  var btn=document.getElementById('btnAn');
+  btn.innerHTML='<div class="ring" style="margin:0 auto;border-color:rgba(255,255,255,.25);border-top-color:#fff"></div>';
+  btn.disabled=true;
+  /* Real deployment: send image to OCR API, parse ID number */
+  setTimeout(function(){
+    btn.textContent='تحليل الصورة'; btn.disabled=false;
+    var ids=Object.keys(DB);
+    showResult(ids[Math.floor(Math.random()*ids.length)],true);
+  },1800);
+}
+
+/* ──────── MANUAL ──────── */
+function doLookup(){
+  var id=document.getElementById('idInp').value.trim();
+  var nm=document.getElementById('nmInp').value.trim();
+  if(!id){toast('يرجى إدخال رقم الهوية'); return;}
+  var btn=document.querySelector('#boxMan .sbtn');
+  btn.innerHTML='<div class="ring" style="margin:0 auto;border-color:rgba(255,255,255,.25);border-top-color:#fff"></div>';
+  btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='بحث عن الأهلية'; btn.disabled=false;
+    showResult(id,false,nm);
+  },800);
+}
+
+/* ──────── RESULT ──────── */
+function showResult(id,auto,nm){
+  var rec=DB[id], box=document.getElementById('resBox'),
+      body=document.getElementById('rbody'),
+      ico=document.getElementById('rico'),
+      tit=document.getElementById('rtitle');
+  var html='';
+  if(rec){
+    var elab=rec.elig==='full'?'أهلية كاملة':rec.elig==='cond'?'مشروط':'لا أهلية';
+    var ecls=rec.elig==='full'?'ef':rec.elig==='cond'?'ec':'en';
+    var eico=rec.elig==='full'?'✓':rec.elig==='cond'?'⚠':'✗';
+    ico.className='rico rico-ok';
+    ico.innerHTML=svgCheck('#5DCAA5');
+    tit.textContent=auto?'تم التعرف على الهوية':'نتيجة البحث';
+    html=
+      field(svgUser(),'الاسم',rec.name)+
+      field(svgCard(),'رقم الهوية','<span style="direction:ltr;display:inline-block">'+id+'</span>')+
+      field(svgUsers(),'القبيلة',rec.tribe)+
+      '<div class="rf"><div class="rfi">'+svgShield()+'</div><div><div class="rfl">نطاق التغطية</div><div class="rfv">'+rec.cov+'</div><span class="eb '+ecls+'">'+eico+' '+elab+'</span></div></div>'+
+      field(svgFile(),'المستندات',rec.docs);
+    addHist(rec.name,rec.elig,id);
+    toast('✓ تم التعرف على الهوية بنجاح');
+  } else {
+    ico.className='rico rico-er';
+    ico.innerHTML=svgX('#FCA5A5');
+    tit.textContent='لم يُعثر على بيانات';
+    html='<div class="rf"><div class="rfi" style="background:rgba(163,45,45,.15)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div><div class="rfl">رقم الهوية</div><div class="rfv" style="direction:ltr;display:inline-block">'+id+'</div></div></div><div class="rf" style="background:rgba(163,45,45,.08);border:1px solid rgba(163,45,45,.2)"><div style="font-size:12px;color:#FCA5A5;line-height:1.65">الرقم غير مسجل في قاعدة البيانات.<br>يرجى التحقق من الرقم أو مراجعة الإدارة.</div></div>';
+    addHist('رقم غير مسجل','none',id);
+    toast('⚠️ لم يُعثر على بيانات');
+  }
+  body.innerHTML=html;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function field(ico,lbl,val){
+  return '<div class="rf"><div class="rfi">'+ico+'</div><div><div class="rfl">'+lbl+'</div><div class="rfv">'+val+'</div></div></div>';
+}
+
+function clearRes(){
+  document.getElementById('resBox').classList.remove('show');
+  document.getElementById('idInp').value='';
+  document.getElementById('nmInp').value='';
+  document.getElementById('prev').style.display='none';
+  document.getElementById('btnAn').style.display='none';
+  document.getElementById('fi').value='';
+}
+
+/* ──────── HISTORY ──────── */
+function addHist(name,elig,id){
+  hist.unshift({name:name,elig:elig,id:id,t:new Date().toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})});
+  if(hist.length>15) hist.pop();
+  renderHist();
+}
+function renderHist(){
+  var el=document.getElementById('hilist');
+  if(!hist.length){el.innerHTML='<div class="hemp">لا توجد عمليات مسح بعد</div>';return;}
+  el.innerHTML=hist.map(function(h){
+    var dc=h.elig==='full'?'dok':h.elig==='cond'?'dco':'dno';
+    return '<div class="hi" onclick="document.getElementById(\'idInp\').value=\''+h.id+'\';setTab(\'man\');doLookup()"><div class="hid '+dc+'"></div><span class="hin">'+h.name+'</span><span class="hit">'+h.t+'</span></div>';
+  }).join('');
+}
+function clearHist(){hist=[];renderHist();toast('تم مسح السجل');}
+
+/* ──────── SVGs ──────── */
+function svgCheck(c){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';}
+function svgX(c){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';}
+function svgUser(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--prm)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';}
+function svgCard(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--prm)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>';}
+function svgUsers(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--prm)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';}
+function svgShield(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--prm)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';}
+function svgFile(){return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--prm)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';}
+
+/* ──────── TOAST ──────── */
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+
+/* ──────── INIT ──────── */
+window.addEventListener('load', function(){
+  // Show HTTPS note if on file://
+  if(location.protocol==='file:'){
+    document.getElementById('httpsNote').classList.add('show');
+    document.getElementById('camPhTxt').innerHTML='الكاميرا تحتاج <strong>HTTPS</strong><br>استخدم <strong>رفع صورة</strong> أو <strong>إدخال يدوي</strong>';
+  }
+});
+</script>
+</body>
+</html>
