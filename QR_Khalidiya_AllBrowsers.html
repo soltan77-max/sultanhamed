@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطاقة QR — مركز صحي الخالدية</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Kufi Arabic',sans-serif;background:#EAF3EE;direction:rtl;padding:24px 16px;display:flex;flex-direction:column;align-items:center}
+
+.toolbar{width:100%;max-width:680px;background:#fff;border-radius:14px;border:1px solid #d1fae5;padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tb-label{font-size:12px;color:#374151;white-space:nowrap}
+.tb-input{flex:1;min-width:200px;padding:7px 11px;border:1px solid #d1fae5;border-radius:8px;font-size:12px;font-family:inherit;outline:none;background:#f8fafb;color:#1A1A2E;direction:ltr;text-align:left}
+.tb-input:focus{border-color:#0F6E56}
+.tb-btn{padding:8px 18px;background:#0F6E56;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.tb-print{padding:8px 18px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+
+.card{width:100%;max-width:680px;background:#fff;border-radius:20px;overflow:hidden;border:1.5px solid #d1fae5}
+.card-header{background:#0F6E56;padding:20px 26px 16px}
+.ch-top{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.ch-logo{width:50px;height:50px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid rgba(255,255,255,.25)}
+.ch-logo svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ch-titles h1{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
+.ch-titles p{font-size:11px;color:rgba(255,255,255,.72);margin-top:2px}
+.ch-badge{margin-right:auto;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 11px;font-size:10px;color:#fff;white-space:nowrap}
+.ch-badge span{width:6px;height:6px;border-radius:50%;background:#5DCAA5}
+.ministry-bar{display:flex;align-items:center;gap:7px;padding-top:11px;border-top:1px solid rgba(255,255,255,.15)}
+.mb-txt{font-size:10px;color:rgba(255,255,255,.6)}
+
+.card-body{padding:22px 26px}
+.main-row{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:flex-start;margin-bottom:20px}
+
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.qr-frame{padding:10px;background:#fff;border:2px solid #E1F5EE;border-radius:14px;line-height:0}
+canvas#qrCanvas{display:block;border-radius:8px}
+.qr-sub{font-size:10px;color:#64748B;text-align:center;line-height:1.6}
+.qr-sub strong{color:#0F6E56;display:block;font-size:11px}
+
+.service-title{font-size:17px;font-weight:700;color:#1A1A2E;line-height:1.35;margin-bottom:4px}
+.service-sub{font-size:12px;color:#64748B;line-height:1.65;margin-bottom:13px}
+.tribe-box{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 13px;margin-bottom:13px;display:flex;align-items:flex-start;gap:9px}
+.tribe-box svg{width:17px;height:17px;stroke:#534AB7;fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
+.tribe-txt{font-size:11px;color:#3C3489;line-height:1.6}
+.tribe-txt strong{color:#26215C}
+.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
+.step{display:flex;align-items:flex-start;gap:9px}
+.sn{width:22px;height:22px;background:#0F6E56;color:#fff;border-radius:6px;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st{font-size:12px;color:#374151;line-height:1.55}
+.st strong{color:#1A1A2E}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+.tag{font-size:10px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:7px;padding:3px 8px;color:#166534;display:flex;align-items:center;gap:4px}
+.tag-pu{background:#F5F3FF;border-color:#DDD6FE;color:#4C1D95}
+.td{width:5px;height:5px;border-radius:50%;background:#22c55e}
+.tag-pu .td{background:#8B5CF6}
+
+hr{border:none;border-top:1.5px dashed #e2e8f0;margin-bottom:16px}
+.card-footer{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}
+.cf-name{font-size:14px;font-weight:700;color:#0F6E56;margin-bottom:3px}
+.cf-addr{font-size:11px;color:#64748B;line-height:1.7}
+.cf-addr strong{color:#374151}
+.cf-right{text-align:left}
+.cf-hours{font-size:11px;color:#64748B;line-height:1.7;margin-bottom:5px}
+.cf-hours strong{color:#374151}
+.cf-url{font-size:10px;color:#94A3B8;direction:ltr;word-break:break-all}
+
+.card-band{background:#0F6E56;padding:9px 26px;display:flex;align-items:center;justify-content:space-between}
+.cb-tag{font-size:10.5px;color:rgba(255,255,255,.82)}
+.cb-num{font-size:12px;font-weight:600;color:#5DCAA5;direction:ltr}
+
+@media print{
+  body{background:#fff;padding:0;display:block}
+  .toolbar{display:none!important}
+  .card{border-radius:0;border:none;max-width:100%}
+  .card-header,.card-band,.tribe-box,.sn,.tag,.tag-pu{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{margin:0;size:A4 portrait}
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="tb-label">رابط المنصة:</span>
+  <input class="tb-input" id="urlInput" value="https://health.gov.sa/khalidiya" placeholder="https://...">
+  <button class="tb-btn" onclick="buildQR()">تحديث QR</button>
+  <button class="tb-print" onclick="window.print()">🖨️ طباعة</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="ch-top">
+      <div class="ch-logo">
+        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="ch-titles">
+        <h1>مركز صحي الخالدية</h1>
+        <p>التجمع الصحي الأول · الرياض</p>
+      </div>
+      <div class="ch-badge"><span></span>خدمة إلكترونية</div>
+    </div>
+    <div class="ministry-bar">
+      <svg width="13" height="13" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="mb-txt">وزارة الصحة · المملكة العربية السعودية · الرقم الوطني الموحد: 920021111</span>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="main-row">
+      <div class="qr-wrap">
+        <div class="qr-frame">
+          <canvas id="qrCanvas" width="200" height="200"></canvas>
+        </div>
+        <div class="qr-sub">
+          <strong>صوّر بكاميرا جوالك</strong>
+          يفتح تلقائياً — iOS وAndroid
+        </div>
+      </div>
+
+      <div>
+        <div class="service-title">منصة الأسئلة الشائعة الذكية</div>
+        <div class="service-sub">تحقق من أهلية علاجك · احجز موعدك<br>استفسر عن خدماتك — في ثوانٍ بدون انتظار</div>
+        <div class="tribe-box">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="tribe-txt">يشمل التحقق من <strong>أهلية العلاج القبلية</strong> لجميع القبائل المسجلة في التجمع الأول</div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="sn">١</div><div class="st">صوّر رمز QR بكاميرا جوالك</div></div>
+          <div class="step"><div class="sn">٢</div><div class="st">اختر <strong>مسح الهوية</strong> أو أدخل رقمك يدوياً</div></div>
+          <div class="step"><div class="sn">٣</div><div class="st">احصل على بيانات أهليتك <strong>فوراً</strong></div></div>
+        </div>
+        <div class="tags">
+          <span class="tag tag-pu"><span class="td"></span>أهلية العلاج القبلية</span>
+          <span class="tag"><span class="td"></span>حجز المواعيد</span>
+          <span class="tag"><span class="td"></span>نتائج التحاليل</span>
+          <span class="tag"><span class="td"></span>التطعيمات</span>
+          <span class="tag"><span class="td"></span>الأدوية المزمنة</span>
+          <span class="tag"><span class="td"></span>الطوارئ</span>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="card-footer">
+      <div>
+        <div class="cf-name">مركز صحي الخالدية</div>
+        <div class="cf-addr">
+          <strong>الموقع:</strong> حي الخالدية، الرياض<br>
+          <strong>الهاتف:</strong> 0114512800<br>
+          <strong>التجمع الصحي الأول</strong>
+        </div>
+      </div>
+      <div class="cf-right">
+        <div class="cf-hours">
+          <strong>أوقات العمل:</strong><br>
+          الأحد – الخميس<br>
+          ٨:٠٠ ص — ٤:٠٠ م
+        </div>
+        <div class="cf-url" id="urlDisplay">health.gov.sa/khalidiya</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-band">
+    <span class="cb-tag">خدمة إلكترونية لتحسين تجربة المراجع · التجمع الصحي الأول بالرياض</span>
+    <span class="cb-num">920021111</span>
+  </div>
+</div>
+
+<script>
+/* ── Pure-JS QR Code generator (no external lib) ──────────────────────
+   Based on QR Code Model 2, uses Reed-Solomon error correction.
+   Works on all browsers including Safari iOS/macOS.
+──────────────────────────────────────────────────────────────────────── */
+var QRUtil = (function(){
+  var PATTERN_POSITION_TABLE = [[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]];
+  var G15=1335,G18=7973,G15_MASK=21522;
+  function getBCHDigit(d){var n=0;while(d){n++;d>>>=1;}return n;}
+  var _bchdg15=getBCHDigit(G15);
+  var _bchdg18=getBCHDigit(G18);
+  function getBCHTypeInfo(d){var r=d<<10;while(getBCHDigit(r)>=_bchdg15+1){r^=(G15<<(getBCHDigit(r)-_bchdg15-1));}return((d<<10)|r)^G15_MASK;}
+  function getBCHTypeNumber(d){var r=d<<12;while(getBCHDigit(r)>=_bchdg18+1){r^=(G18<<(getBCHDigit(r)-_bchdg18-1));}return(d<<12)|r;}
+  function getPatternPosition(tn){return PATTERN_POSITION_TABLE[tn-1];}
+  function getMaskFunc(p){switch(p){case 0:return function(i,j){return(i+j)%2==0;};case 1:return function(i,j){return i%2==0;};case 2:return function(i,j){return j%3==0;};case 3:return function(i,j){return(i+j)%3==0;};case 4:return function(i,j){return(Math.floor(i/2)+Math.floor(j/3))%2==0;};case 5:return function(i,j){return(i*j)%2+(i*j)%3==0;};case 6:return function(i,j){return((i*j)%2+(i*j)%3)%2==0;};case 7:return function(i,j){return((i*j)%3+(i+j)%2)%2==0;};}}
+  function getErrorCorrectPolynomial(ec){var r=new QRPolynomial([1],0);for(var i=0;i<ec;i++){r=r.multiply(new QRPolynomial([1,QRMath.gexp(i)],0));}return r;}
+  function getLostPoint(qm){var ml=qm.getModuleCount(),lp=0,dc=0,v,row,col;for(row=0;row<ml;row++){for(col=0;col<ml;col++){dc=0;v=qm.isDark(row,col);for(var r=-1;r<=1;r++){if(row+r<0||ml<=row+r)continue;for(var c=-1;c<=1;c++){if(col+c<0||ml<=col+c)continue;if(r==0&&c==0)continue;if(v===qm.isDark(row+r,col+c)){dc++;}}}if(dc>5){lp+=(dc-5)+3;}}}for(row=0;row<ml-1;row++){for(col=0;col<ml-1;col++){var ct=0;if(qm.isDark(row,col))ct++;if(qm.isDark(row+1,col))ct++;if(qm.isDark(row,col+1))ct++;if(qm.isDark(row+1,col+1))ct++;if(ct==0||ct==4)lp+=3;}}for(row=0;row<ml;row++){for(col=0;col<ml-6;col++){if(qm.isDark(row,col)&&!qm.isDark(row,col+1)&&qm.isDark(row,col+2)&&qm.isDark(row,col+3)&&qm.isDark(row,col+4)&&!qm.isDark(row,col+5)&&qm.isDark(row,col+6)){lp+=40;}}}for(col=0;col<ml;col++){for(row=0;row<ml-6;row++){if(qm.isDark(row,col)&&!qm.isDark(row+1,col)&&qm.isDark(row+2,col)&&qm.isDark(row+3,col)&&qm.isDark(row+4,col)&&!qm.isDark(row+5,col)&&qm.isDark(row+6,col)){lp+=40;}}}var dk=0;for(row=0;row<ml;row++){for(col=0;col<ml;col++){if(qm.isDark(row,col))dk++;}}var rp=Math.abs(100*dk/ml/ml-50)/5;lp+=rp*10;return lp;}
+  return{getBCHTypeInfo:getBCHTypeInfo,getBCHTypeNumber:getBCHTypeNumber,getPatternPosition:getPatternPosition,getMaskFunc:getMaskFunc,getErrorCorrectPolynomial:getErrorCorrectPolynomial,getLostPoint:getLostPoint};
+})();
+
+var QRMath=(function(){
+  var EXP_TABLE=new Array(256),LOG_TABLE=new Array(256);
+  for(var i=0;i<8;i++)EXP_TABLE[i]=1<<i;
+  for(var i=8;i<256;i++)EXP_TABLE[i]=EXP_TABLE[i-4]^EXP_TABLE[i-5]^EXP_TABLE[i-6]^EXP_TABLE[i-8];
+  for(var i=0;i<255;i++)LOG_TABLE[EXP_TABLE[i]]=i;
+  return{glog:function(n){if(n<1)throw new Error("glog("+n+")");return LOG_TABLE[n];},gexp:function(n){while(n<0)n+=255;while(n>=256)n-=255;return EXP_TABLE[n];}};
+})();
+
+function QRPolynomial(num,shift){if(num.length==undefined)throw new Error(num.length+"/"+shift);var offset=0;while(offset<num.length&&num[offset]==0)offset++;this.num=new Array(num.length-offset+shift);for(var i=0;i<num.length-offset;i++)this.num[i]=num[i+offset];}
+QRPolynomial.prototype={get:function(i){return this.num[i];},getLength:function(){return this.num.length;},multiply:function(e){var num=new Array(this.getLength()+e.getLength()-1);for(var i=0;i<this.getLength();i++)for(var j=0;j<e.getLength();j++)num[i+j]^=QRMath.gexp(QRMath.glog(this.get(i))+QRMath.glog(e.get(j)));return new QRPolynomial(num,0);},mod:function(e){if(this.getLength()-e.getLength()<0)return this;var r=QRMath.glog(this.get(0))-QRMath.glog(e.get(0));var num=new Array(this.getLength());for(var i=0;i<this.getLength();i++)num[i]=this.get(i);for(var i=0;i<e.getLength();i++)num[i]^=QRMath.gexp(QRMath.glog(e.get(i))+r);return new QRPolynomial(num,0).mod(e);}};
+
+function QRRSBlock(tc,dc){this.totalCount=tc;this.dataCount=dc;}
+QRRSBlock.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]];
+QRRSBlock.getRSBlocks=function(tn,el){var t=QRRSBlock.getRsBlockTable(tn,el);if(t==undefined)throw new Error("bad rs block @ tn:"+tn+"/"+el);var l=t.length/3,r=[];for(var i=0;i<l;i++){var c=t[i*3+0],n1=t[i*3+1],n2=t[i*3+2];for(var j=0;j<c;j++)r.push(new QRRSBlock(n1,n2));}return r;};
+QRRSBlock.getRsBlockTable=function(tn,el){switch(el){case 1:return QRRSBlock.RS_BLOCK_TABLE[(tn-1)*4+0];case 0:return QRRSBlock.RS_BLOCK_TABLE[(tn-1)*4+1];case 3:return QRRSBlock.RS_BLOCK_TABLE[(tn-1)*4+2];case 2:return QRRSBlock.RS_BLOCK_TABLE[(tn-1)*4+3];}};
+
+function QRBitBuffer(){this.buffer=[];this.length=0;}
+QRBitBuffer.prototype={get:function(i){var bi=Math.floor(i/8);return((this.buffer[bi]>>>(7-i%8))&1)==1;},put:function(n,l){for(var i=0;i<l;i++)this.putBit(((n>>>(l-i-1))&1)==1);},getLengthInBits:function(){return this.length;},putBit:function(b){var bi=Math.floor(this.length/8);if(this.buffer.length<=bi)this.buffer.push(0);if(b)this.buffer[bi]|=(0x80>>>(this.length%8));this.length++;}};
+
+var QRMode={MODE_NUMBER:1<<0,MODE_ALPHA_NUM:1<<1,MODE_8BIT_BYTE:1<<2,MODE_KANJI:1<<3};
+var QRErrorCorrectLevel={L:1,M:0,Q:3,H:2};
+
+function QR8bitByte(d){this.mode=QRMode.MODE_8BIT_BYTE;this.data=d;this.parsedData=[];for(var i=0,l=this.data.length;i<l;i++){var b=this.data.charCodeAt(i);if(b>0x0080&&b<=0x00FF){this.parsedData.push(0xC0|(b>>>6));this.parsedData.push(0x80|(b&0x3F));}else if(b>0x00FF&&b<=0x07FF){this.parsedData.push(0xE0|(b>>>12));this.parsedData.push(0x80|((b>>>6)&0x3F));this.parsedData.push(0x80|(b&0x3F));}else if(b>0x07FF&&b<=0xFFFF){this.parsedData.push(0xE0|(b>>>12));this.parsedData.push(0x80|((b>>>6)&0x3F));this.parsedData.push(0x80|(b&0x3F));}else{this.parsedData.push(b);}}if(this.parsedData.length!=this.data.length){this.parsedData.unshift(191);this.parsedData.unshift(187);this.parsedData.unshift(239);}}
+QR8bitByte.prototype={getMode:function(){return this.mode;},getLength:function(bl){return this.parsedData.length;},write:function(bb){for(var i=0,l=this.parsedData.length;i<l;i++)bb.put(this.parsedData[i],8);}};
+
+function QRCodeModel(tn,el){this.typeNumber=tn;this.errorCorrectLevel=el;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[];}
+QRCodeModel.prototype={addData:function(d){this.dataList.push(new QR8bitByte(d));this.dataCache=null;},isDark:function(r,c){if(r<0||this.moduleCount<=r||c<0||this.moduleCount<=c)throw new Error(r+","+c);return this.modules[r][c];},getModuleCount:function(){return this.moduleCount;},make:function(){if(this.typeNumber<1){this.typeNumber=1;for(var tn=1;tn<40;tn++){var rsb=QRRSBlock.getRSBlocks(tn,this.errorCorrectLevel),bb=new QRBitBuffer();for(var i=0;i<this.dataList.length;i++){var d=this.dataList[i];bb.put(d.getMode(),4);bb.put(d.getLength(bb),QRCodeModel.getLengthInBits(d.getMode(),tn));d.write(bb);}var tdc=0;for(var i=0;i<rsb.length;i++)tdc+=rsb[i].dataCount;if(bb.getLengthInBits()<=tdc*8)break;this.typeNumber=tn+1;}}this.makeImpl(false,this.getBestMaskPattern());},makeImpl:function(tm,mp){this.moduleCount=this.typeNumber*4+17;this.modules=function(mc){var mods=[];for(var r=0;r<mc;r++){mods.push([]);for(var c=0;c<mc;c++)mods[r].push(null);}return mods;}(this.moduleCount);this.setupPositionProbePattern(0,0);this.setupPositionProbePattern(this.moduleCount-7,0);this.setupPositionProbePattern(0,this.moduleCount-7);this.setupPositionAdjustPattern();this.setupTimingPattern();this.setupTypeInfo(tm,mp);if(this.typeNumber>=7)this.setupTypeNumber(tm);if(this.dataCache==null)this.dataCache=QRCodeModel.createData(this.typeNumber,this.errorCorrectLevel,this.dataList);this.mapData(this.dataCache,mp);},setupPositionProbePattern:function(row,col){for(var r=-1;r<=7;r++){if(row+r<=-1||this.moduleCount<=row+r)continue;for(var c=-1;c<=7;c++){if(col+c<=-1||this.moduleCount<=col+c)continue;if((0<=r&&r<=6&&c==0)||(0<=r&&r<=6&&c==6)||(r==0&&0<=c&&c<=6)||(r==6&&0<=c&&c<=6)||(2<=r&&r<=4&&2<=c&&c<=4))this.modules[row+r][col+c]=true;else this.modules[row+r][col+c]=false;}}},getBestMaskPattern:function(){var mp=0,min=0;for(var p=0;p<8;p++){this.makeImpl(true,p);var l=QRUtil.getLostPoint(this);if(p==0||min>l){min=l;mp=p;}}return mp;},setupTimingPattern:function(){for(var r=8;r<this.moduleCount-8;r++){if(this.modules[r][6]!=null)continue;this.modules[r][6]=(r%2==0);}for(var c=8;c<this.moduleCount-8;c++){if(this.modules[6][c]!=null)continue;this.modules[6][c]=(c%2==0);}},setupPositionAdjustPattern:function(){var pos=QRUtil.getPatternPosition(this.typeNumber);for(var i=0;i<pos.length;i++){for(var j=0;j<pos.length;j++){var row=pos[i],col=pos[j];if(this.modules[row][col]!=null)continue;for(var r=-2;r<=2;r++){for(var c=-2;c<=2;c++){if(r==-2||r==2||c==-2||c==2||(r==0&&c==0))this.modules[row+r][col+c]=true;else this.modules[row+r][col+c]=false;}}}}},setupTypeNumber:function(tm){var bits=QRUtil.getBCHTypeNumber(this.typeNumber);for(var i=0;i<18;i++){var mod=(!tm&&((bits>>i)&1)==1);this.modules[Math.floor(i/3)][i%3+this.moduleCount-8-3]=mod;}for(var i=0;i<18;i++){var mod=(!tm&&((bits>>i)&1)==1);this.modules[i%3+this.moduleCount-8-3][Math.floor(i/3)]=mod;}},setupTypeInfo:function(tm,mp){var data=(this.errorCorrectLevel<<3)|mp;var bits=QRUtil.getBCHTypeInfo(data);for(var i=0;i<15;i++){var mod=(!tm&&((bits>>i)&1)==1);if(i<6)this.modules[i][8]=mod;else if(i<8)this.modules[i+1][8]=mod;else this.modules[this.moduleCount-15+i][8]=mod;}for(var i=0;i<15;i++){var mod=(!tm&&((bits>>i)&1)==1);if(i<8)this.modules[8][this.moduleCount-i-1]=mod;else if(i<9)this.modules[8][15-i-1+1]=mod;else this.modules[8][15-i-1]=mod;}this.modules[this.moduleCount-8][8]=(!tm);},mapData:function(data,mp){var inc=-1,row=this.moduleCount-1,bitIndex=7,byteIndex=0;var maskFunc=QRUtil.getMaskFunc(mp);for(var col=this.moduleCount-1;col>0;col-=2){if(col==6)col--;while(true){for(var c=0;c<2;c++){if(this.modules[row][col-c]==null){var dk=false;if(byteIndex<data.length)dk=((data[byteIndex]>>>bitIndex)&1)==1;var mask=maskFunc(row,col-c);if(mask)dk=!dk;this.modules[row][col-c]=dk;bitIndex--;if(bitIndex==-1){byteIndex++;bitIndex=7;}}}row+=inc;if(row<0||this.moduleCount<=row){row-=inc;inc=-inc;break;}}}}};
+QRCodeModel.PAD0=0xEC;QRCodeModel.PAD1=0x11;
+QRCodeModel.createData=function(tn,el,dl){var rsb=QRRSBlock.getRSBlocks(tn,el),bb=new QRBitBuffer();for(var i=0;i<dl.length;i++){var d=dl[i];bb.put(d.getMode(),4);bb.put(d.getLength(bb),QRCodeModel.getLengthInBits(d.getMode(),tn));d.write(bb);}var tdc=0;for(var i=0;i<rsb.length;i++)tdc+=rsb[i].dataCount;if(bb.getLengthInBits()>tdc*8)throw new Error("code length overflow. ("+bb.getLengthInBits()+">"+tdc*8+")");if(bb.getLengthInBits()+4<=tdc*8)bb.put(0,4);while(bb.getLengthInBits()%8!=0)bb.putBit(false);while(true){if(bb.getLengthInBits()>=tdc*8)break;bb.put(QRCodeModel.PAD0,8);if(bb.getLengthInBits()>=tdc*8)break;bb.put(QRCodeModel.PAD1,8);}return QRCodeModel.createBytes(bb,rsb);};
+QRCodeModel.createBytes=function(bb,rsb){var os=0,max=0,al=[],el=[];for(var i=0;i<rsb.length;i++){var dc=rsb[i].dataCount,ec=rsb[i].totalCount-dc,da=new Array(dc),ea=[];max=Math.max(max,dc);for(var j=0;j<dc;j++)da[j]=0xff&bb.buffer[j+os];os+=dc;var p=QRUtil.getErrorCorrectPolynomial(ec);var r=new QRPolynomial(da,p.getLength()-1).mod(p);ea=new Array(p.getLength()-1);for(var j=0;j<ea.length;j++){var mid=j+r.getLength()-ea.length;ea[j]=(mid>=0)?r.get(mid):0;}al.push(da);el.push(ea);}var len=0;for(var i=0;i<rsb.length;i++)len+=rsb[i].totalCount;var data=new Array(len),idx=0;for(var i=0;i<max;i++){for(var j=0;j<al.length;j++){if(i<al[j].length)data[idx++]=al[j][i];}}for(var i=0;i<el[0].length;i++){for(var j=0;j<el.length;j++){data[idx++]=el[j][i];}}return data;};
+QRCodeModel.getLengthInBits=function(mode,tn){if(mode==QRMode.MODE_NUMBER)return tn<10?10:(tn<27?12:14);if(mode==QRMode.MODE_ALPHA_NUM)return tn<10?9:(tn<27?11:13);if(mode==QRMode.MODE_8BIT_BYTE)return tn<10?8:(tn<27?16:16);if(mode==QRMode.MODE_KANJI)return tn<10?8:(tn<27?10:12);throw new Error("mode:"+mode);};
+
+function buildQR() {
+  var url = document.getElementById('urlInput').value.trim() || 'https://health.gov.sa/khalidiya';
+  document.getElementById('urlDisplay').textContent = url.replace(/^https?:\/\//, '');
+
+  var qr = new QRCodeModel(-1, QRErrorCorrectLevel.H);
+  qr.addData(url);
+  qr.make();
+
+  var canvas = document.getElementById('qrCanvas');
+  var size = 200;
+  canvas.width = size;
+  canvas.height = size;
+  var ctx = canvas.getContext('2d');
+  var mc = qr.getModuleCount();
+  var cell = size / mc;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = '#0F6E56';
+
+  for (var r = 0; r < mc; r++) {
+    for (var c = 0; c < mc; c++) {
+      if (qr.isDark(r, c)) {
+        ctx.fillRect(
+          Math.floor(c * cell),
+          Math.floor(r * cell),
+          Math.ceil(cell),
+          Math.ceil(cell)
+        );
+      }
+    }
+  }
+}
+
+document.getElementById('urlInput').addEventListener('input', buildQR);
+window.addEventListener('load', buildQR);
+</script>
+</body>
+</html>
